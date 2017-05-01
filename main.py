@@ -61,6 +61,8 @@ def get_users(username):
 def main():
     perms = itertools.permutations(string.ascii_lowercase, 3)
 
+    os.makedirs(DATA_DIR, exist_ok=True)
+
     for prefix in perms:
         get_users(prefix)
 
