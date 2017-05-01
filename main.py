@@ -31,14 +31,11 @@ def search_users(username):
 
             time.sleep(r.uniform(INTERVAL_START, INTERVAL_END))
 
-        except urllib.error.HTTPError:
-            pages_left = False
-        except:
-            with open(LOG_FILE, "a") as log:
-                exc_info = sys.exc_info()
-                log.write(str(datetime.utcnow()) + "\n")
-                log.write(str(exc_info[0]) + " ")
-                log.write(str(exc_info[1]) + "\n\n")
+        except urllib.error.HTTPError as err:
+            if err.code == 404:
+                pages_left = False
+            else:
+                raise
 
 
 def parse_usernames(html_page):
@@ -50,8 +47,8 @@ def parse_usernames(html_page):
     return names
 
 
-def get_users(username):
-    for results in search_users(username):
+def get_users(prefix):
+    for results in search_users(prefix):
         names = parse_usernames(results)
 
         with open(path.join(DATA_DIR, "mal_usernames.txt"), "a") as file:
@@ -64,8 +61,19 @@ def main():
 
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    for prefix in perms:
-        get_users(prefix)
+    for prefix_tuple in perms:
+        prefix = "".join(prefix_tuple)
+
+        try:
+            get_users(prefix)
+        except:
+            with open(LOG_FILE, "a") as log:
+                exc_info = sys.exc_info()
+                log.write(str(datetime.utcnow()) + "\n")
+                log.write("Current prefix: " + prefix + "\n")
+                log.write(str(exc_info[0]) + " ")
+                log.write(str(exc_info[1]) + "\n\n")
+            raise
 
 
 if __name__ == "__main__":
