@@ -12,7 +12,7 @@ import time
 MAL_URL = "https://myanimelist.net/users.php?q={0}&show={1}"
 USER_MULTIPLIER = 24
 INTERVAL_START = 0.2
-INTERVAL_END = 0.6
+INTERVAL_END = 0.5
 LOG_FILE = "events.log"
 DATA_DIR = "data"
 
@@ -57,11 +57,18 @@ def get_users(prefix):
 
 
 def main():
-    perms = itertools.permutations(string.ascii_lowercase, 3)
+    name_prefixes = itertools.product(string.ascii_lowercase, repeat=3)
 
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    for prefix_tuple in perms:
+    if len(sys.argv) > 1:
+        continue_from = sys.argv[1]
+
+        next_prefix = "abc"
+        while next_prefix != continue_from:
+            next_prefix = "".join(name_prefixes.__next__())
+
+    for prefix_tuple in name_prefixes:
         prefix = "".join(prefix_tuple)
 
         try:
