@@ -1,9 +1,19 @@
 import urllib.request
 import re
+import os.path as path
+import string
+import itertools
+import sys
+from datetime import datetime
+import random as r
+import time
 
 MAL_URL = "https://myanimelist.net/users.php?q={0}&show={1}"
 USER_MULTIPLIER = 24
-INTERVAL = 0.5
+INTERVAL_START = 0.2
+INTERVAL_END = 0.6
+LOG_FILE = "events.log"
+DATA_DIR = "data"
 
 
 def search_users(username):
@@ -18,8 +28,16 @@ def search_users(username):
 
             yield request.read().decode("utf-8")
 
+            time.sleep(r.uniform(INTERVAL_START, INTERVAL_END))
+
         except urllib.error.HTTPError:
             pages_left = False
+        except:
+            with open(LOG_FILE, "a") as log:
+                exc_info = sys.exc_info()
+                log.write(str(datetime.utcnow()) + "\n")
+                log.write(str(exc_info[0]) + " ")
+                log.write(str(exc_info[1]) + "\n\n")
 
 
 def parse_usernames(html_page):
@@ -35,10 +53,17 @@ def get_users(username):
     for results in search_users(username):
         names = parse_usernames(results)
 
-        with open("mal_usernames.txt", "a") as file:
+        with open(path.join(DATA_DIR, "mal_usernames.txt"), "a") as file:
             for name in names:
                 file.write(name + "\n")
 
 
+def main():
+    perms = itertools.permutations(string.ascii_lowercase, 3)
+
+    for prefix in perms:
+        get_users(prefix)
+
+
 if __name__ == "__main__":
-    get_users("oikai")
+    main()
