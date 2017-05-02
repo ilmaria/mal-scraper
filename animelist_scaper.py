@@ -38,11 +38,25 @@ def extract_data(anime_list):
     }
 
     for anime in anime_list.findall("anime"):
-        title = anime.find("series_title").text
-        score = int(anime.find("my_score").text)
+        score = anime.find("my_score").text
 
-        if score > 0:
-            anime_data["anime_list"].append((title, score))
+        if score != "0":
+            title = anime.find("series_title").text
+            status = anime.find("my_status").text
+            watched_episodes = anime.find("my_watched_episodes").text
+            episodes = anime.find("series_episodes").text
+            anime_id = anime.find("series_animedb_id").text
+
+            anime_entry = {
+                "anime_id": anime_id,
+                "title": title,
+                "score": int(score),
+                "status": int(status),
+                "watched_episodes": int(watched_episodes),
+                "episodes": int(episodes),
+            }
+
+            anime_data["anime_list"].append(anime_entry)
 
     return anime_data
 
