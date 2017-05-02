@@ -59,6 +59,9 @@ def extract_data(anime_list):
 
             anime_data["anime_list"].append(anime_entry)
 
+    if len(anime_data["anime_list"]) < 10:
+        return None
+
     return anime_data
 
 
