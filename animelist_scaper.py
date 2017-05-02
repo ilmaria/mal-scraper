@@ -15,6 +15,7 @@ LOG_FILE = "events.log"
 DATA_DIR = "data"
 USERNAMES_FILE = path.join(DATA_DIR, "mal_usernames.txt")
 ANIME_LISTS_FILE = path.join(DATA_DIR, "anime_lists.json")
+PROGRESS_FILE = "list_progress.log"
 
 
 def get_anime_list(username):
@@ -71,6 +72,9 @@ def main():
                 if anime_data is not None:
                     with open(ANIME_LISTS_FILE, "a") as anime_lists:
                         anime_lists.write(json.dumps(anime_data) + "\n")
+
+                with open(PROGRESS_FILE, "w") as progress:
+                    progress.write(username)
 
                 time.sleep(r.uniform(INTERVAL_START, INTERVAL_END))
 

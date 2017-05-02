@@ -15,6 +15,7 @@ INTERVAL_START = 0.2
 INTERVAL_END = 0.5
 LOG_FILE = "events.log"
 DATA_DIR = "data"
+PROGRESS_FILE = "user_progress.log"
 
 
 def search_users(username):
@@ -26,6 +27,13 @@ def search_users(username):
             url = MAL_URL.format(username, i * USER_MULTIPLIER)
             request = urllib.request.urlopen(url)
             i += 1
+
+            with open(PROGRESS_FILE, "r+") as progress:
+                lines = progress.readlines()
+                lines[-1] = "Page: " + str(i)
+                progress.seek(0)
+                progress.truncate()
+                progress.writelines(lines)
 
             yield request.read().decode("utf-8")
 
@@ -72,6 +80,9 @@ def main():
         prefix = "".join(prefix_tuple)
 
         try:
+            with open(PROGRESS_FILE, "w") as progress:
+                progress.write("Prefix: \"" + prefix + "\"\nPage: 0")
+
             get_users(prefix)
         except:
             with open(LOG_FILE, "a") as log:
