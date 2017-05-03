@@ -11,11 +11,11 @@ import json
 MAL_URL = "https://myanimelist.net/malappinfo.php?u={0}&status=all&type=anime"
 INTERVAL_START = 0.2
 INTERVAL_END = 0.5
-LOG_FILE = "events.log"
+LOG_FILE = "animelist_events.log"
 DATA_DIR = "data"
 USERNAMES_FILE = path.join(DATA_DIR, "mal_usernames.txt")
 ANIME_LISTS_FILE = path.join(DATA_DIR, "anime_lists.json")
-PROGRESS_FILE = "list_progress.log"
+PROGRESS_FILE = "animelist_progress.log"
 
 
 def get_anime_list(username):

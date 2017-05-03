@@ -8,14 +8,17 @@ import sys
 from datetime import datetime
 import random as r
 import time
+import argparse
 
 MAL_URL = "https://myanimelist.net/users.php?q={0}&show={1}"
 USER_MULTIPLIER = 24
 INTERVAL_START = 0.2
 INTERVAL_END = 0.5
-LOG_FILE = "events.log"
+
+TS = str(time.time())
+LOG_FILE = "events" + TS + ".log"
 DATA_DIR = "data"
-PROGRESS_FILE = "user_progress.log"
+PROGRESS_FILE = "user_progress" + TS + ".log"
 
 
 def search_users(username):
@@ -65,15 +68,25 @@ def get_users(prefix):
 
 
 def main():
-    name_prefixes = itertools.product(string.ascii_lowercase, repeat=3)
+    parser = argparse.ArgumentParser(description="Retrieve usernames from myanimelist.net")
+    parser.add_argument("-c", "--continue", dest="continue_after",
+                        help="retrieve usernames that come up after this 3 letter search string")
+    parser.add_argument("-r", "--reverse", action="store_true",
+                        help="search usernames in reversed order")
+    args = parser.parse_args()
+
+    if args.reverse:
+        alphabet = reversed(string.ascii_lowercase)
+    else:
+        alphabet = string.ascii_lowercase
+
+    name_prefixes = itertools.product(alphabet, repeat=3)
 
     os.makedirs(DATA_DIR, exist_ok=True)
 
-    if len(sys.argv) > 1:
-        continue_from = sys.argv[1]
-
-        next_prefix = "abc"
-        while next_prefix != continue_from:
+    if args.continue_after is not None:
+        next_prefix = None
+        while next_prefix != args.continue_after:
             next_prefix = "".join(name_prefixes.__next__())
 
     for prefix_tuple in name_prefixes:
