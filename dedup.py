@@ -1,7 +1,7 @@
 import json
 
 
-ANIME_LIST1 = 'data/anime_lists.json'
+ANIME_LIST1 = 'data/animelists.json'
 ANIME_LIST2 = 'data/anime_lists2.json'
 ANIME_LIST3 = 'data/anime_lists3.json'
 NAMES = 'data/usernames.txt'
